@@ -7,6 +7,26 @@
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Edukasi-orange)
+![Platform](https://img.shields.io/badge/Platform-Linux%20%7C%20macOS%20%7C%20Windows-lightgrey)
+
+---
+
+## ⚡ Paling cepetan (TL;DR)
+
+```bash
+git clone https://github.com/<username-kamu>/Allox-Auto.git
+cd Allox-Auto
+source ./activate.sh        # otomatis bikin venv + install requirements
+cp accounts.txt.example accounts.txt
+nano accounts.txt           # isi private key lo, simpan (Ctrl+O, Enter, Ctrl+X)
+python bot.py
+```
+
+Bot bakal nanya mode proxy pas pertama kali, terus jalan forever. Tekan
+`Ctrl+C` buat stop.
+
+**Pengen di Windows / tanpa git / multi-user setup?**
+Lanjut ke [🚀 Cara pakai lengkap](#-cara-pakai-lengkap).
 
 ---
 
@@ -33,102 +53,207 @@
 Allox-Auto/
 ├── bot.py                  ← entry point
 ├── telegram.py             ← reporter Telegram (opsional)
+├── activate.sh             ← shortcut: auto-bikin venv + install
 ├── requirements.txt
 ├── .env.example            ← copy ke .env
 ├── accounts.txt.example    ← copy ke accounts.txt
 ├── proxy.txt.example       ← copy ke proxy.txt
 ├── .gitignore
+├── LICENSE                 ← MIT
 └── README.md
 ```
 
+> ⚠️ **JANGAN PERNAH commit** `accounts.txt`, `proxy.txt`, `.env`, atau
+> file `*.session`. Semuanya udah di-exclude `.gitignore`.
 
 ---
 
-## 🚀 Cara pakai
+## 🚀 Cara pakai lengkap
 
 ### 1. Syarat
 
-- Python **3.10+**
-- Daftar private key Ethereum (satu per wallet yang mau lo farming)
+- **Python 3.10 atau lebih baru**
+  - Cek: `python3 --version`
+  - Di Ubuntu 24.04+ / Debian 12+ udah include Python 3.12 bawaan
+  - Di Windows: download dari [python.org](https://www.python.org/downloads/)
+- **Git** (atau download manual dari GitHub → Code → Download ZIP)
+- Daftar **private key Ethereum** (satu per wallet yang mau lo farming)
 
-### 2. Install
+### 2. Clone repo
+
+**Pake git (direkomendasikan):**
 
 ```bash
 git clone https://github.com/uangdrop/Allox-Auto.git
 cd Allox-Auto
+```
 
+**Atau download ZIP:**
+
+1. Buka halaman repo di GitHub
+2. Klik tombol hijau **Code** → **Download ZIP**
+3. Extract ZIP ke folder mana aja
+4. Buka terminal/cmd di folder itu
+
+### 3. Bikin virtual environment + install dependencies
+
+**Cara gampang (Linux/macOS)** — pake script `activate.sh`:
+
+```bash
+chmod +x activate.sh        # cuma pertama kali
+source ./activate.sh
+```
+
+Script ini otomatis:
+- Bikin folder `.venv` kalo belum ada
+- Install semua package dari `requirements.txt`
+- Aktifin venv di shell lo
+
+Kalau aktivasi sukses, prompt lo bakal jadi:
+```
+(.venv) root@server:~/Allox-Auto#
+```
+
+**Cara manual** (kalo `activate.sh` gak bisa dipake):
+
+```bash
+# Linux / macOS
 python3 -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 
+# Windows (PowerShell)
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# Windows (cmd)
+python -m venv .venv
+.venv\Scripts\activate.bat
+
+# Terus install (semua OS sama)
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 3. Konfigurasi
+> **Error `externally-managed-environment`?**
+> Itu artinya Python lo (kemungkinan Ubuntu 24.04+ / Python 3.12) ngunci
+> pip system-wide. Solusinya: **pake virtual environment** kayak step di
+> atas. JANGAN pake `pip install --break-system-packages` kecuali lo
+> ngerti konsekuensinya.
+
+### 4. Konfigurasi akun
 
 ```bash
 cp accounts.txt.example accounts.txt
-cp proxy.txt.example    proxy.txt       # opsional
-cp .env.example        .env            # opsional (Telegram)
 ```
 
-Edit `accounts.txt`, isi satu private key per baris:
+Edit `accounts.txt` pake text editor apa aja (nano, vim, VS Code):
+
+```bash
+nano accounts.txt
+```
+
+Isi satu private key per baris:
 
 ```
+# Format: 0x + 64 karakter hex (0x prefix boleh ngga)
 0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 0xabcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789ab
 ```
 
-> Baris yang mulai dengan `#` dan baris kosong di-skip. Awalan `0x`
-> boleh ada boleh juga nggak.
+Di nano: `Ctrl+O` → `Enter` buat simpan, `Ctrl+X` buat keluar.
 
-### 4. Jalankan
+> ⚠️ **PENTING**: Jangan kasih orang lain `accounts.txt`. Isi private
+> key = kontrol penuh atas wallet.
+
+### 5. (Opsional) Konfigurasi proxy
+
+Kalo lo mau pake proxy (mis. buat handle rate-limit, atau sembunyiin
+IP):
+
+```bash
+cp proxy.txt.example proxy.txt
+nano proxy.txt
+```
+
+Format (satu proxy per baris):
+
+```
+http://user:password@127.0.0.1:8080
+https://1.2.3.4:443
+http://10.0.0.1:3128          # tanpa auth juga boleh
+```
+
+### 6. Jalankan bot
 
 ```bash
 python bot.py
 ```
 
-Pas pertama kali jalan, lo ditanya:
+Pas pertama kali, lo ditanya mode proxy:
 
 ```
 [19:00:00] [INFO] Select run mode:
   1. Run with proxy
   2. Run without proxy
-Choice [1/2]:
+Choice [1/2]: _
 ```
 
-Pilihan lo disimpan ke `.allox_state.json`, jadi nggak ditanya lagi
-di run berikutnya.
+Ketik `1` atau `2`, tekan Enter. Pilihan lo disimpan ke `.allox_state.json`
+— jadi nggak ditanya lagi di run berikutnya.
 
-Setelah login, log bakal muncul kayak gini:
+Output normal bakal kayak gini:
 
 ```
-[19:42:08] [SUCCESS] Logged in: 0xFCAd...377c
-[19:42:10] [SUCCESS] Chat 1/20 Sent | +10 Pts | Total: 10 | Limit: 19
-[19:42:13] [SUCCESS] Chat 2/20 Sent | +10 Pts | Total: 20 | Limit: 18
+[19:42:08] [SUCCESS] Loaded 2 account(s) from accounts.txt
+[19:42:08] [SUCCESS] RSS: 30 titles from https://cointelegraph.com/rss
+[19:42:08] [INFO] ── Account 1/2 ──
+[19:42:08] [INFO] Wallet: 0xFCAd0B19bB29D4674531d6f115237E16AfCE377c
+[19:42:10] [SUCCESS] Logged in: 0xFCAd...377c
+[19:42:13] [SUCCESS] Chat 1/20 Sent | +10 Pts | Total: 10 | Limit: 19
+[19:42:16] [SUCCESS] Chat 2/20 Sent | +10 Pts | Total: 20 | Limit: 18
 ...
+[20:00:00] [INFO] Cycle #1: 2/2 akun sukses, 0 gagal.
+[20:00:00] [INFO] Cycle complete. Sleeping 24h — next run at 2026-07-13 20:00:00 WIB
 ```
 
-Kalau semua akun udah selesai, bot tidur 24 jam terus mulai siklus
-berikutnya. Tekan `Ctrl+C` kapan aja buat stop.
+Tekan `Ctrl+C` kapan aja buat stop.
+
+### 7. Run ulang / auto-restart
+
+Bot-nya jalan forever (cycle 24 jam). Kalo lo mau:
+
+- **Jalan manual tiap hari**: `source .venv/bin/activate && python bot.py`
+- **Jalan di background (Linux)**: `nohup python bot.py > bot.log 2>&1 &`
+- **Auto-start pas server reboot**: pake `systemd` atau `cron @reboot`
+  (lihat [Deployment](#-deployment) di bawah)
 
 ---
 
 ## 📩 Laporan Telegram (opsional)
 
-Laporan Telegram **mati secara default**. Buat nyalain, isi `.env`:
+Laporan Telegram **mati secara default**. Buat nyalain:
 
 ### Opsi A — Bot API (recommended, paling gampang)
 
 1. Buka Telegram, chat [@BotFather](https://t.me/BotFather), kirim `/newbot`
-2. Copy token bot yang dikasih
+2. Ikutin instruksi, copy **token** yang dikasih
 3. Buka chat sama bot baru lo, kirim `/start` (**wajib!**)
-4. Dapetin chat_id lo dari [@userinfobot](https://t.me/userinfobot)
-5. Tambahin ke `.env`:
+4. Dapetin **chat_id** lo dari [@userinfobot](https://t.me/userinfobot)
+5. Bikin file `.env`:
 
-```env
-TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
-TELEGRAM_CHAT_ID=123456789
-```
+   ```bash
+   cp .env.example .env
+   nano .env
+   ```
+
+   Isi:
+
+   ```env
+   TELEGRAM_BOT_TOKEN=123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11
+   TELEGRAM_CHAT_ID=123456789
+   ```
+
+6. Restart bot: `python bot.py`
 
 ### Opsi B — Telethon userbot (advanced)
 
@@ -147,7 +272,7 @@ TELEGRAM_CHAT_ID=123456789
 
 ### Format laporan
 
-Tiap 24 jam, lo bakal dapet pesan kayak gini:
+Tiap 24 jam, lo bakal dapet pesan kayak gini di Telegram:
 
 ```
 📊 Allox Auto Bot — Cycle #1 Report
@@ -167,8 +292,10 @@ Tiap 24 jam, lo bakal dapet pesan kayak gini:
   • Failed to fetch nonce ... → Cek koneksi/proxy, atau tunggu beberapa menit.
 ```
 
-Teks yang sama juga **selalu di-print ke terminal**, jadi lo punya
-copy lokal meskipun Telegram belum di-konfigurasi.
+> **Tips multi-user**: Kalo lo jalanin bot untuk beberapa orang (temen,
+> komunitas), tiap orang bikin **bot Telegram sendiri** + simpen
+> `.env`-nya sendiri. 1 token bot = 1 report channel. Jangan share
+> 1 token untuk banyak orang — semua report bakal ke-merge jadi 1 chat.
 
 ---
 
@@ -235,6 +362,80 @@ PROMPT_TEMPLATES=Jelasin headline ini: {title}|Menurut lo gimana: {title}?|Ringk
 
 ---
 
+## 🛠 Deployment
+
+### Opsi 1 — `screen` / `tmux` (paling gampang)
+
+```bash
+# Install screen
+apt install -y screen        # Ubuntu/Debian
+brew install screen          # macOS
+
+# Bikin session baru
+screen -S allox
+
+# Di dalam screen, jalanin bot
+cd ~/Allox-Auto
+source .venv/bin/activate
+python bot.py
+
+# Detach: Ctrl+A, terus D
+# List session: screen -ls
+# Reattach:  screen -r allox
+```
+
+### Opsi 2 — `nohup` (background, output ke file)
+
+```bash
+cd ~/Allox-Auto
+source .venv/bin/activate
+nohup python bot.py > bot.log 2>&1 &
+
+# Liat log
+tail -f bot.log
+
+# Stop
+pkill -f "python bot.py"
+```
+
+### Opsi 3 — `systemd` (auto-start pas reboot, production-grade)
+
+Bikin file `/etc/systemd/system/allox-bot.service`:
+
+```ini
+[Unit]
+Description=Allox Auto Bot
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/Allox-Auto
+ExecStart=/root/Allox-Auto/.venv/bin/python /root/Allox-Auto/bot.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/var/log/allox-bot.log
+StandardError=append:/var/log/allox-bot.log
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Aktifin:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable allox-bot
+sudo systemctl start allox-bot
+sudo systemctl status allox-bot       # cek status
+sudo journalctl -u allox-bot -f       # liat log realtime
+```
+
+> **Penting**: ganti `User=root` dan `WorkingDirectory` sesuai setup
+> lo. Kalo lo pake user lain, bikin `chown -R user:user /path/to/project`.
+
+---
+
 ## 🛠 Troubleshooting
 
 | Masalah                                   | Solusi                                                                 |
@@ -245,12 +446,20 @@ PROMPT_TEMPLATES=Jelasin headline ini: {title}|Menurut lo gimana: {title}?|Ringk
 | `Request failed after 3 attempts`         | Network/timeout. Cek internet, coba proxy lain.                       |
 | `Invalid private key length`              | Key di `accounts.txt` salah. Harus 64 hex char (0x boleh, boleh ngga).|
 | `Signing failed`                          | `pip install -U eth-account`                                          |
+| `error: externally-managed-environment`   | Ubuntu 24.04+ / Python 3.12 ngunci pip system-wide. Solusi:           |
+|                                           | `python3 -m venv .venv && source .venv/bin/activate` lalu install     |
+|                                           | ulang, atau pake `source ./activate.sh`. Alternatif terakhir:          |
+|                                           | `pip install --break-system-packages -r requirements.txt`.            |
+| `.venv/bin/activate: No such file`        | Lo coba aktivasi sebelum venv dibuat. Solusi: pake `source ./activate.sh` |
+|                                           | yang auto-bikin, atau `python3 -m venv .venv` dulu.                  |
 | `All RSS feeds failed`                    | Semua sumber RSS down. Bot fallback ke prompt statis dan tetap jalan. |
 |                                           | Cek internet, atau override `RSS_FEEDS` ke feed yang masih hidup.     |
 | `Only got N prompts from RSS, padding`    | Beberapa feed balikin lebih sedikit dari yang diharapkan. Siklus tetap |
 |                                           | jalan normal.                                                          |
 | Telegram: laporan nggak masuk             | Cek nilai `.env`. Buat Bot API, pastikan udah kirim `/start` ke bot. |
 | Telegram: `HTTP 400 parse error`          | Set `TELEGRAM_PARSE_MODE=` (kosong) buat fallback ke plain text.       |
+| Bot-nya jalan tapi dapet point 0          | Kemungkinan kena rate-limit server. Tunggu 24 jam cycle berikutnya.   |
+|                                           | Atau cek `accounts.txt` ada key yang valid.                            |
 
 ---
 
@@ -264,10 +473,15 @@ PROMPT_TEMPLATES=Jelasin headline ini: {title}|Menurut lo gimana: {title}?|Ringk
   nggak boleh nampilin file-file itu.
 - Jalanin di mesin yang lo percaya. Jangan paste key di shared/cloud
   VM yang nggak lo kontrol.
+- **Kalo lo distribusiin bot ini ke banyak orang** (temen, komunitas):
+  - Masing-masing orang bikin `accounts.txt` & `.env` sendiri
+  - Jangan share file yang ada private key
+  - Bot Telegram harus 1 per orang, jangan dipake bareng
 - Project ini **edukatif**. Pake dengan risiko sendiri dan hormati
   Terms of Service platform target.
 
 ---
+
 
 ## 📜 Lisensi
 
