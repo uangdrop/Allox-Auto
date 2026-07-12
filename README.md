@@ -41,8 +41,6 @@ Allox-Auto/
 └── README.md
 ```
 
-> ⚠️ **JANGAN PERNAH commit** `accounts.txt`, `proxy.txt`, `.env`, atau
-> file `*.session`. Semuanya udah di-exclude `.gitignore`.
 
 ---
 
