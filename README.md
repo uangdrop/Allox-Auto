@@ -14,7 +14,7 @@
 ## ⚡ Paling cepetan (TL;DR)
 
 ```bash
-git clone https://github.com/<username-kamu>/Allox-Auto.git
+git clone https://github.com/uangdrop/Allox-Auto.git
 cd Allox-Auto
 source ./activate.sh        # otomatis bikin venv + install requirements
 cp accounts.txt.example accounts.txt
@@ -255,20 +255,6 @@ Laporan Telegram **mati secara default**. Buat nyalain:
 
 6. Restart bot: `python bot.py`
 
-### Opsi B — Telethon userbot (advanced)
-
-Pake ini cuma kalau lo perlu post ke channel/group atas nama akun lo
-sendiri. Resiko rate-limit / akun ke-restrict lebih tinggi.
-
-```env
-TELEGRAM_API_ID=12345
-TELEGRAM_API_HASH=abcdef0123456789...
-TELEGRAM_SESSION=allox_reporter
-TELEGRAM_CHAT_ID=123456789
-```
-
-> `TELEGRAM_SESSION` itu nama file (nggak pake path) — Telethon bikin
-> otomatis pas run pertama dan minta nomor HP lo. Cuma sekali aja.
 
 ### Format laporan
 
