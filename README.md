@@ -30,7 +30,7 @@
 ## 📁 Struktur project
 
 ```
-allox-auto-bot/
+Allox-Auto/
 ├── bot.py                  ← entry point
 ├── telegram.py             ← reporter Telegram (opsional)
 ├── requirements.txt
@@ -56,8 +56,8 @@ allox-auto-bot/
 ### 2. Install
 
 ```bash
-git clone https://github.com/<username-kamu>/allox-auto-bot.git
-cd allox-auto-bot
+git clone https://github.com/uangdrop/Allox-Auto.git
+cd Allox-Auto
 
 python3 -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
